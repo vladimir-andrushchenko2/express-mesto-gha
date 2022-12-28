@@ -20,6 +20,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/', require('./routes/users'));
+app.use('/', require('./routes/cards'));
 
 app.listen(PORT, () => {
   console.log('Listening on port', PORT);

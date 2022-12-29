@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const { removeUndefinedEntries } = require('../utils');
 
 function getUsers(req, res) {
   User.find({})
@@ -20,4 +21,19 @@ function postUser(req, res) {
     .catch(err => res.status(500).send({ message: err.message }));
 }
 
-module.exports = { getUsers, getUser, postUser };
+function patchUser(req, res) {
+  const updateOptions = {
+    new: true,
+    runValidators: true,
+  };
+
+  const { name, about } = req.body;
+
+  const update = removeUndefinedEntries({ name, about });
+
+  User.findByIdAndUpdate(req.user._id, update, updateOptions)
+    .then(user => res.send({ data: user }))
+    .catch(err => res.status(500).send({ message: err.message }));
+}
+
+module.exports = { getUsers, getUser, postUser, patchUser };

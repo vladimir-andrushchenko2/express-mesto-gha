@@ -16,7 +16,7 @@ function postCard(req, res) {
 }
 
 function deleteCard(req, res) {
-  Card.findByIdAndDelete(req.params['cardId'])
+  Card.findByIdAndDelete(req.params.cardId)
     .then(card => res.send({ data: card }))
     .catch(err => res.status(500).send({ message: err.message }));
 }

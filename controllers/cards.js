@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { NotFound } = require('../errorTypes');
+const { NotFound, UnauthorizedError } = require('../errorTypes');
 
 function getCards(req, res) {
   Card.find({})
@@ -39,14 +39,20 @@ function deleteCard(req, res) {
   Card.findById(req.params.cardId)
     .then(card => {
       if (card.owner.toString() !== owner) {
-        res.status(401).send({ message: `Можно удалять только свои карточки` });
-        return;
+        throw new UnauthorizedError(`Можно удалять только свои карточки`);
       }
 
       return Card.findByIdAndRemove(card._id);
     })
     .then(card => res.send({ data: card }))
-    .catch(err => res.status(500).send({ message: err.message }));
+    .catch(err => {
+      if (err instanceof UnauthorizedError) {
+        res.status(401).send({ message: err.message });
+        return;
+      }
+
+      res.status(500).send({ message: err.message })
+    });
 }
 
 function putLike(req, res) {

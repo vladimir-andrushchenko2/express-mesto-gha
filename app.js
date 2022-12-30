@@ -20,8 +20,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', require('./routes/users'));
-app.use('/', require('./routes/cards'));
+app.use('/', require('./routes'));
 
 // 404
 app.use((req, res) => {

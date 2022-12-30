@@ -1,5 +1,8 @@
 const Card = require('../models/card');
 const { NotFound, UnauthorizedError } = require('../errorTypes');
+const {
+  NOT_FOUND_CODE, BAD_REQUEST_CODE, SERVER_ERROR_CODE, UNAUTHORIZED_ERROR_CODE,
+} = require('../constants');
 
 function getCards(req, res) {
   Card.find({})
@@ -12,7 +15,7 @@ function postCard(req, res) {
   const { _id: owner } = req.user;
 
   if (!owner) {
-    res.status(401).send({ message: 'Создание карточек доступно только для авторизованных пользователей' });
+    res.status(UNAUTHORIZED_ERROR_CODE).send({ message: 'Создание карточек доступно только для авторизованных пользователей' });
     return;
   }
 
@@ -20,11 +23,11 @@ function postCard(req, res) {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err.message });
+        res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
 
-      res.status(500).send({ message: err.message });
+      res.status(SERVER_ERROR_CODE).send({ message: err.message });
     });
 }
 
@@ -32,7 +35,7 @@ function deleteCard(req, res) {
   const { _id: owner } = req.user;
 
   if (!owner) {
-    res.status(401).send({ message: 'Удаление карточек доступно только для авторизованных пользователей' });
+    res.status(UNAUTHORIZED_ERROR_CODE).send({ message: 'Удаление карточек доступно только для авторизованных пользователей' });
     return;
   }
 
@@ -51,21 +54,21 @@ function deleteCard(req, res) {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err instanceof NotFound) {
-        res.status(404).send({ message: err.message });
+        res.status(NOT_FOUND_CODE).send({ message: err.message });
         return;
       }
 
       if (err instanceof UnauthorizedError) {
-        res.status(401).send({ message: err.message });
+        res.status(UNAUTHORIZED_ERROR_CODE).send({ message: err.message });
         return;
       }
 
       if (err.name === 'CastError') {
-        res.status(400).send({ message: err.message });
+        res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
 
-      res.status(500).send({ message: err.message });
+      res.status(SERVER_ERROR_CODE).send({ message: err.message });
     });
 }
 
@@ -84,16 +87,16 @@ function putLike(req, res) {
     })
     .catch((err) => {
       if (err instanceof NotFound) {
-        res.status(404).send({ message: err.message });
+        res.status(NOT_FOUND_CODE).send({ message: err.message });
         return;
       }
 
       if (err.name === 'CastError') {
-        res.status(400).send({ message: err.message });
+        res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
 
-      res.status(500).send({ message: err.message });
+      res.status(SERVER_ERROR_CODE).send({ message: err.message });
     });
 }
 
@@ -112,16 +115,16 @@ function deleteLike(req, res) {
     })
     .catch((err) => {
       if (err instanceof NotFound) {
-        res.status(404).send({ message: err.message });
+        res.status(NOT_FOUND_CODE).send({ message: err.message });
         return;
       }
 
       if (err.name === 'CastError') {
-        res.status(400).send({ message: err.message });
+        res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
 
-      res.status(500).send({ message: err.message });
+      res.status(SERVER_ERROR_CODE).send({ message: err.message });
     });
 }
 

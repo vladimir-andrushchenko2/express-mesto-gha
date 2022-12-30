@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const { removeUndefinedEntries } = require('../utils');
 const { NotFound } = require('../errorTypes');
+const { NOT_FOUND_CODE, BAD_REQUEST_CODE, SERVER_ERROR_CODE } = require('../constants');
 
 function getUsers(req, res) {
   User.find({})
@@ -19,16 +20,16 @@ function getUser(req, res) {
     })
     .catch((err) => {
       if (err instanceof NotFound) {
-        res.status(404).send({ message: err.message });
+        res.status(NOT_FOUND_CODE).send({ message: err.message });
         return;
       }
 
       if (err.name === 'CastError') {
-        res.status(400).send({ message: err.message });
+        res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
 
-      res.status(500).send({ message: err.message });
+      res.status(SERVER_ERROR_CODE).send({ message: err.message });
     });
 }
 
@@ -39,10 +40,10 @@ function postUser(req, res) {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err.message });
+        res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
-      res.status(500).send({ message: err.message });
+      res.status(SERVER_ERROR_CODE).send({ message: err.message });
     });
 }
 
@@ -57,7 +58,7 @@ function patchUser(req, res) {
   const update = removeUndefinedEntries({ name, about });
 
   if (!Object.keys(update).length) {
-    res.status(400).send({ message: 'Заполните минимум одно поле для обновления пользователя' });
+    res.status(BAD_REQUEST_CODE).send({ message: 'Заполните минимум одно поле для обновления пользователя' });
     return;
   }
 
@@ -65,11 +66,11 @@ function patchUser(req, res) {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err.message });
+        res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
 
-      res.status(500).send({ message: err.message });
+      res.status(SERVER_ERROR_CODE).send({ message: err.message });
     });
 }
 
@@ -82,7 +83,7 @@ function patchUserAvatar(req, res) {
   const { avatar } = req.body;
 
   if (!avatar) {
-    res.status(400).send({ message: 'Поле avatar пустое' });
+    res.status(BAD_REQUEST_CODE).send({ message: 'Поле avatar пустое' });
     return;
   }
 
@@ -90,11 +91,11 @@ function patchUserAvatar(req, res) {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err.message });
+        res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
 
-      res.status(500).send({ message: err.message });
+      res.status(SERVER_ERROR_CODE).send({ message: err.message });
     });
 }
 

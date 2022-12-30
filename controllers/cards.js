@@ -1,17 +1,14 @@
-const { ValidationError, CastError } = require('mongoose').Error;
 const Card = require('../models/card');
 const { NotFound } = require('../errorTypes');
 const {
-  NOT_FOUND_CODE, BAD_REQUEST_CODE, SERVER_ERROR_CODE, SERVER_ERROR_MSG, CARD_NOT_FOUND_MSG,
+  CARD_NOT_FOUND_MSG,
 } = require('../constants');
+const { makeCatchHandler } = require('../utils');
 
 function getCards(req, res) {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => {
-      console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
-    });
+    .catch(makeCatchHandler(res));
 }
 
 function postCard(req, res) {
@@ -20,15 +17,7 @@ function postCard(req, res) {
 
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err instanceof ValidationError) {
-        res.status(BAD_REQUEST_CODE).send({ message: err.message });
-        return;
-      }
-
-      console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
-    });
+    .catch(makeCatchHandler(res));
 }
 
 function deleteCard(req, res) {
@@ -40,20 +29,7 @@ function deleteCard(req, res) {
 
       return res.send({ data: card });
     })
-    .catch((err) => {
-      if (err instanceof NotFound) {
-        res.status(NOT_FOUND_CODE).send({ message: err.message });
-        return;
-      }
-
-      if (err instanceof CastError) {
-        res.status(BAD_REQUEST_CODE).send({ message: err.message });
-        return;
-      }
-
-      console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
-    });
+    .catch(makeCatchHandler(res));
 }
 
 function updateCard(makeUpdateObj) {
@@ -70,20 +46,7 @@ function updateCard(makeUpdateObj) {
 
         res.send({ data: card });
       })
-      .catch((err) => {
-        if (err instanceof NotFound) {
-          res.status(NOT_FOUND_CODE).send({ message: err.message });
-          return;
-        }
-
-        if (err instanceof CastError) {
-          res.status(BAD_REQUEST_CODE).send({ message: err.message });
-          return;
-        }
-
-        console.error(err);
-        res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
-      });
+      .catch(makeCatchHandler(res));
   };
 }
 

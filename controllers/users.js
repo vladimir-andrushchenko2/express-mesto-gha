@@ -1,17 +1,12 @@
-const { ValidationError, CastError } = require('mongoose').Error;
 const User = require('../models/user');
 const { NotFound } = require('../errorTypes');
-const {
-  NOT_FOUND_CODE, BAD_REQUEST_CODE, SERVER_ERROR_CODE, SERVER_ERROR_MSG, USER_NOT_FOUND_MSG,
-} = require('../constants');
+const { USER_NOT_FOUND_MSG } = require('../constants');
+const { makeCatchHandler } = require('../utils');
 
 function getUsers(req, res) {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => {
-      console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
-    });
+    .catch(makeCatchHandler(res));
 }
 
 function getUser(req, res) {
@@ -23,20 +18,7 @@ function getUser(req, res) {
 
       res.send({ data: user });
     })
-    .catch((err) => {
-      if (err instanceof NotFound) {
-        res.status(NOT_FOUND_CODE).send({ message: err.message });
-        return;
-      }
-
-      if (err instanceof CastError) {
-        res.status(BAD_REQUEST_CODE).send({ message: err.message });
-        return;
-      }
-
-      console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
-    });
+    .catch(makeCatchHandler(res));
 }
 
 function postUser(req, res) {
@@ -44,14 +26,7 @@ function postUser(req, res) {
 
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err instanceof ValidationError) {
-        res.status(BAD_REQUEST_CODE).send({ message: err.message });
-        return;
-      }
-      console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
-    });
+    .catch(makeCatchHandler(res));
 }
 
 function patchUser(req, res) {
@@ -64,17 +39,13 @@ function patchUser(req, res) {
 
   User.findByIdAndUpdate(req.user._id, { name, about }, updateOptions)
     .then((user) => {
-      res.send({ data: user });
-    })
-    .catch((err) => {
-      if (err instanceof ValidationError) {
-        res.status(BAD_REQUEST_CODE).send({ message: err.message });
-        return;
+      if (!user) {
+        throw new NotFound(USER_NOT_FOUND_MSG);
       }
 
-      console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
-    });
+      res.send({ data: user });
+    })
+    .catch(makeCatchHandler(res));
 }
 
 function patchUserAvatar(req, res) {
@@ -86,16 +57,14 @@ function patchUserAvatar(req, res) {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { avatar }, updateOptions)
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err instanceof ValidationError) {
-        res.status(BAD_REQUEST_CODE).send({ message: err.message });
-        return;
+    .then((user) => {
+      if (!user) {
+        throw new NotFound(USER_NOT_FOUND_MSG);
       }
 
-      console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
-    });
+      res.send({ data: user });
+    })
+    .catch(makeCatchHandler(res));
 }
 
 module.exports = {

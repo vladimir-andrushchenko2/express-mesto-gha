@@ -8,7 +8,15 @@
           "_id"
         ]
       }
+    ],
+    "no-console": [
+      "error",
+      {
+        "allow": [
+          "warn",
+          "error"
+        ]
+      }
     ]
-  },
-  "no-console": false
+  }
 }

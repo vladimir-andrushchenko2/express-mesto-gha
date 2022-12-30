@@ -1,7 +1,8 @@
+const { ValidationError, CastError } = require('mongoose').Error;
 const Card = require('../models/card');
-const { NotFound, UnauthorizedError } = require('../errorTypes');
+const { NotFound } = require('../errorTypes');
 const {
-  NOT_FOUND_CODE, BAD_REQUEST_CODE, SERVER_ERROR_CODE, UNAUTHORIZED_ERROR_CODE,
+  NOT_FOUND_CODE, BAD_REQUEST_CODE, SERVER_ERROR_CODE,
 } = require('../constants');
 
 function getCards(req, res) {
@@ -20,7 +21,7 @@ function postCard(req, res) {
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof ValidationError) {
         res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
@@ -31,16 +32,10 @@ function postCard(req, res) {
 }
 
 function deleteCard(req, res) {
-  const { _id: owner } = req.user;
-
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw new NotFound('Такой карточки нет');
-      }
-
-      if (card.owner.toString() !== owner) {
-        throw new UnauthorizedError('Можно удалять только свои карточки');
       }
 
       return Card.findByIdAndRemove(card._id);
@@ -52,12 +47,7 @@ function deleteCard(req, res) {
         return;
       }
 
-      if (err instanceof UnauthorizedError) {
-        res.status(UNAUTHORIZED_ERROR_CODE).send({ message: err.message });
-        return;
-      }
-
-      if (err.name === 'CastError') {
+      if (err instanceof CastError) {
         res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
@@ -86,7 +76,7 @@ function putLike(req, res) {
         return;
       }
 
-      if (err.name === 'CastError') {
+      if (err instanceof CastError) {
         res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
@@ -115,7 +105,7 @@ function deleteLike(req, res) {
         return;
       }
 
-      if (err.name === 'CastError') {
+      if (err instanceof CastError) {
         res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }

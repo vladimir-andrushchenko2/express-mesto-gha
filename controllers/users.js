@@ -1,5 +1,6 @@
+const { ValidationError, CastError } = require('mongoose').Error;
 const User = require('../models/user');
-const { removeUndefinedEntries } = require('../utils');
+// const { removeUndefinedEntries } = require('../utils');
 const { NotFound } = require('../errorTypes');
 const { NOT_FOUND_CODE, BAD_REQUEST_CODE, SERVER_ERROR_CODE } = require('../constants');
 
@@ -27,7 +28,7 @@ function getUser(req, res) {
         return;
       }
 
-      if (err.name === 'CastError') {
+      if (err instanceof CastError) {
         res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
@@ -43,7 +44,7 @@ function postUser(req, res) {
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof ValidationError) {
         res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
@@ -60,19 +61,12 @@ function patchUser(req, res) {
 
   const { name, about } = req.body;
 
-  const update = removeUndefinedEntries({ name, about });
-
-  if (!Object.keys(update).length) {
-    res.status(BAD_REQUEST_CODE).send({ message: 'Заполните минимум одно поле для обновления пользователя' });
-    return;
-  }
-
-  User.findByIdAndUpdate(req.user._id, update, updateOptions)
+  User.findByIdAndUpdate(req.user._id, { name, about }, updateOptions)
     .then((user) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof ValidationError) {
         res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
@@ -90,15 +84,10 @@ function patchUserAvatar(req, res) {
 
   const { avatar } = req.body;
 
-  if (!avatar) {
-    res.status(BAD_REQUEST_CODE).send({ message: 'Поле avatar пустое' });
-    return;
-  }
-
   User.findByIdAndUpdate(req.user._id, { avatar }, updateOptions)
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof ValidationError) {
         res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }

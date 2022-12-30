@@ -2,7 +2,7 @@
   "name": "express-mesto-gha",
   "version": "1.0.0",
   "description": "[![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml) # Проект Mesto фронтенд + бэкенд",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "lint": "npx eslint .",
     "start": "node app.js",
@@ -13,7 +13,7 @@
     "url": "git+https://github.com/vladimir-andrushchenko2/express-mesto-gha.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Volodymyr Andrushchenko",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/vladimir-andrushchenko2/express-mesto-gha/issues"

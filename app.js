@@ -14,11 +14,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '63ac9906adaa0fbceb13ebaf'
+    _id: '63ac9906adaa0fbceb13ebaf',
   };
 
   next();
-})
+});
 
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));

@@ -100,5 +100,5 @@ function patchUserAvatar(req, res) {
 }
 
 module.exports = {
-  getUsers, getUser, postUser, patchUser, patchUserAvatar
+  getUsers, getUser, postUser, patchUser, patchUserAvatar,
 };

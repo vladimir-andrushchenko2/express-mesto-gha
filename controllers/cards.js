@@ -25,7 +25,14 @@ function postCard(req, res) {
 
   Card.create({ name, link, owner })
     .then(card => res.send({ data: card }))
-    .catch(err => res.status(500).send({ message: err.message }));
+    .catch(err => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: err.message })
+        return;
+      }
+
+      res.status(500).send({ message: err.message })
+    });
 }
 
 function deleteCard(req, res) {
@@ -74,6 +81,11 @@ function putLike(req, res) {
         return;
       }
 
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: err.message });
+        return;
+      }
+
       res.status(500).send({ message: err.message })
     });
 }
@@ -94,6 +106,11 @@ function deleteLike(req, res) {
     .catch(err => {
       if (err instanceof NotFound) {
         res.status(404).send({ message: err.message })
+        return;
+      }
+
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: err.message });
         return;
       }
 

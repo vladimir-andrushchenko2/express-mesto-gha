@@ -25,7 +25,8 @@ function getUser(req, res) {
       }
 
       if (err.name === 'CastError') {
-        res.status(400).send({ message: err.message })
+        res.status(400).send({ message: err.message });
+        return;
       }
 
       res.status(500).send({ message: err.message })
@@ -47,6 +48,7 @@ function postUser(req, res) {
     .catch(err => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: err.message })
+        return;
       }
       res.status(500).send({ message: err.message })
     });
@@ -64,6 +66,7 @@ function patchUser(req, res) {
 
   if (!Object.keys(update).length) {
     res.status(400).send({ message: `Заполните минимум одно поле для обновления пользователя` });
+    return;
   }
 
   User.findByIdAndUpdate(req.user._id, update, updateOptions)
@@ -71,6 +74,7 @@ function patchUser(req, res) {
     .catch(err => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: err.message })
+        return;
       }
 
       res.status(500).send({ message: err.message })
@@ -95,6 +99,7 @@ function patchUserAvatar(req, res) {
     .catch(err => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: err.message })
+        return;
       }
 
       res.status(500).send({ message: err.message })

@@ -22,6 +22,11 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
+// 404
+app.use(function (req, res) {
+  res.status(404).send({ message: 'Направильный путь' });
+});
+
 app.listen(PORT, () => {
   console.log('Listening on port', PORT);
 })

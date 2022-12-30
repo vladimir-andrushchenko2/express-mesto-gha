@@ -39,22 +39,36 @@ function deleteCard(req, res) {
   const { _id: owner } = req.user;
 
   if (!owner) {
-    res.status(401).send({ message: `Удаление карточек доступно только для авторизованных пользователей` });
+    res.status(401).send({ message: 'Удаление карточек доступно только для авторизованных пользователей' });
     return;
   }
 
   Card.findById(req.params.cardId)
     .then(card => {
+      if (!card) {
+        throw new NotFound('Такой карточки нет');
+      }
+
       if (card.owner.toString() !== owner) {
-        throw new UnauthorizedError(`Можно удалять только свои карточки`);
+        throw new UnauthorizedError('Можно удалять только свои карточки');
       }
 
       return Card.findByIdAndRemove(card._id);
     })
     .then(card => res.send({ data: card }))
     .catch(err => {
+      if (err instanceof NotFound) {
+        res.status(404).send({ message: err.message })
+        return;
+      }
+
       if (err instanceof UnauthorizedError) {
         res.status(401).send({ message: err.message });
+        return;
+      }
+
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: err.message });
         return;
       }
 
@@ -70,7 +84,7 @@ function putLike(req, res) {
   )
     .then(card => {
       if (!card) {
-        throw new NotFound("Такой карточки не существует");
+        throw new NotFound('Такой карточки не существует');
       }
 
       res.send({ data: card })
@@ -98,7 +112,7 @@ function deleteLike(req, res) {
   )
     .then(card => {
       if (!card) {
-        throw new NotFound("Такой карточки не существует");
+        throw new NotFound('Такой карточки не существует');
       }
 
       res.send({ data: card })

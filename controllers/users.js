@@ -13,7 +13,7 @@ function getUser(req, res) {
   User.findById(req.params['userId'])
     .then(user => {
       if (!user) {
-        throw new NotFound("Запрашиваемый пользователь не найден");
+        throw new NotFound('Запрашиваемый пользователь не найден');
       }
 
       res.send({ data: user })
@@ -38,7 +38,7 @@ function postUser(req, res) {
 
   for (const entry of [name, about, avatar]) {
     if (!entry) {
-      res.status(400).send({ message: `Заполните все поля для создания пользователя` });
+      res.status(400).send({ message: 'Заполните все поля для создания пользователя' });
       return;
     }
   }
@@ -65,7 +65,7 @@ function patchUser(req, res) {
   const update = removeUndefinedEntries({ name, about });
 
   if (!Object.keys(update).length) {
-    res.status(400).send({ message: `Заполните минимум одно поле для обновления пользователя` });
+    res.status(400).send({ message: 'Заполните минимум одно поле для обновления пользователя' });
     return;
   }
 
@@ -90,7 +90,7 @@ function patchUserAvatar(req, res) {
   const { avatar } = req.body;
 
   if (!avatar) {
-    res.status(400).send({ message: `Поле avatar пустое` });
+    res.status(400).send({ message: 'Поле avatar пустое' });
     return;
   }
 

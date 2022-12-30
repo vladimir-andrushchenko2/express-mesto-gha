@@ -21,12 +21,6 @@ app.use((req, res, next) => {
 
 app.use('/', require('./routes'));
 
-// 404
-app.use((req, res) => {
-  res.status(404).send({ message: 'Направильный путь' });
-});
-
 app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
   console.log('Listening on port', PORT);
 });

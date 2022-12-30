@@ -5,6 +5,7 @@ const UNAUTHORIZED_ERROR_CODE = 401;
 const SERVER_ERROR_MSG = 'Что-то пошло не так';
 const CARD_NOT_FOUND_MSG = 'Такой карточки нет';
 const USER_NOT_FOUND_MSG = 'Запрашиваемый пользователь не найден';
+const NOT_FOUND_MSG = 'Направильный путь';
 
 module.exports = {
   NOT_FOUND_CODE,
@@ -14,4 +15,5 @@ module.exports = {
   SERVER_ERROR_MSG,
   CARD_NOT_FOUND_MSG,
   USER_NOT_FOUND_MSG,
+  NOT_FOUND_MSG,
 };

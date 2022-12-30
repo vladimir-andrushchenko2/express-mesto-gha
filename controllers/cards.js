@@ -32,15 +32,14 @@ function postCard(req, res) {
 }
 
 function deleteCard(req, res) {
-  Card.findById(req.params.cardId)
+  Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw new NotFound(CARD_NOT_FOUND_MSG);
       }
 
-      return Card.findByIdAndRemove(card._id);
+      return res.send({ data: card });
     })
-    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err instanceof NotFound) {
         res.status(NOT_FOUND_CODE).send({ message: err.message });

@@ -1,6 +1,5 @@
 const { ValidationError, CastError } = require('mongoose').Error;
 const User = require('../models/user');
-// const { removeUndefinedEntries } = require('../utils');
 const { NotFound } = require('../errorTypes');
 const {
   NOT_FOUND_CODE, BAD_REQUEST_CODE, SERVER_ERROR_CODE, SERVER_ERROR_MSG, USER_NOT_FOUND_MSG,

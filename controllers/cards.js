@@ -1,10 +1,11 @@
+/* eslint-disable no-underscore-dangle */
 const Card = require('../models/card');
 const { NotFound, UnauthorizedError } = require('../errorTypes');
 
 function getCards(req, res) {
   Card.find({})
-    .then(cards => res.send({ data: cards }))
-    .catch(err => res.status(500).send({ message: err.message }));
+    .then((cards) => res.send({ data: cards }))
+    .catch((err) => res.status(500).send({ message: err.message }));
 }
 
 function postCard(req, res) {
@@ -12,26 +13,19 @@ function postCard(req, res) {
   const { _id: owner } = req.user;
 
   if (!owner) {
-    res.status(401).send({ message: `Создание карточек доступно только для авторизованных пользователей` });
+    res.status(401).send({ message: 'Создание карточек доступно только для авторизованных пользователей' });
     return;
   }
 
-  for (const entry of [name, link]) {
-    if (!entry) {
-      res.status(400).send({ message: `Заполните name и link для создания пользователя` });
-      return;
-    }
-  }
-
   Card.create({ name, link, owner })
-    .then(card => res.send({ data: card }))
-    .catch(err => {
+    .then((card) => res.send({ data: card }))
+    .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err.message })
+        res.status(400).send({ message: err.message });
         return;
       }
 
-      res.status(500).send({ message: err.message })
+      res.status(500).send({ message: err.message });
     });
 }
 
@@ -44,7 +38,7 @@ function deleteCard(req, res) {
   }
 
   Card.findById(req.params.cardId)
-    .then(card => {
+    .then((card) => {
       if (!card) {
         throw new NotFound('Такой карточки нет');
       }
@@ -55,10 +49,10 @@ function deleteCard(req, res) {
 
       return Card.findByIdAndRemove(card._id);
     })
-    .then(card => res.send({ data: card }))
-    .catch(err => {
+    .then((card) => res.send({ data: card }))
+    .catch((err) => {
       if (err instanceof NotFound) {
-        res.status(404).send({ message: err.message })
+        res.status(404).send({ message: err.message });
         return;
       }
 
@@ -72,7 +66,7 @@ function deleteCard(req, res) {
         return;
       }
 
-      res.status(500).send({ message: err.message })
+      res.status(500).send({ message: err.message });
     });
 }
 
@@ -82,16 +76,16 @@ function putLike(req, res) {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .then(card => {
+    .then((card) => {
       if (!card) {
         throw new NotFound('Такой карточки не существует');
       }
 
-      res.send({ data: card })
+      res.send({ data: card });
     })
-    .catch(err => {
+    .catch((err) => {
       if (err instanceof NotFound) {
-        res.status(404).send({ message: err.message })
+        res.status(404).send({ message: err.message });
         return;
       }
 
@@ -100,7 +94,7 @@ function putLike(req, res) {
         return;
       }
 
-      res.status(500).send({ message: err.message })
+      res.status(500).send({ message: err.message });
     });
 }
 
@@ -110,16 +104,16 @@ function deleteLike(req, res) {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-    .then(card => {
+    .then((card) => {
       if (!card) {
         throw new NotFound('Такой карточки не существует');
       }
 
-      res.send({ data: card })
+      res.send({ data: card });
     })
-    .catch(err => {
+    .catch((err) => {
       if (err instanceof NotFound) {
-        res.status(404).send({ message: err.message })
+        res.status(404).send({ message: err.message });
         return;
       }
 
@@ -128,8 +122,10 @@ function deleteLike(req, res) {
         return;
       }
 
-      res.status(500).send({ message: err.message })
+      res.status(500).send({ message: err.message });
     });
 }
 
-module.exports = { getCards, postCard, deleteCard, putLike, deleteLike };
+module.exports = {
+  getCards, postCard, deleteCard, putLike, deleteLike,
+};

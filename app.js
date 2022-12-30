@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+
 const { PORT = 3000 } = process.env;
 
 const app = express();
@@ -23,10 +24,11 @@ app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
 // 404
-app.use(function (req, res) {
+app.use((req, res) => {
   res.status(404).send({ message: 'Направильный путь' });
 });
 
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log('Listening on port', PORT);
-})
+});

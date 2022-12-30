@@ -15,7 +15,6 @@ function postCard(req, res) {
   const { _id: owner } = req.user;
 
   Card.create({ name, link, owner })
-    .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
     .catch(makeCatchHandler(res));
 }

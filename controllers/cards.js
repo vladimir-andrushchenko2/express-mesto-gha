@@ -7,17 +7,15 @@ const {
 function getCards(req, res) {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      console.error(err);
+      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
+    });
 }
 
 function postCard(req, res) {
   const { name, link } = req.body;
   const { _id: owner } = req.user;
-
-  if (!owner) {
-    res.status(UNAUTHORIZED_ERROR_CODE).send({ message: 'Создание карточек доступно только для авторизованных пользователей' });
-    return;
-  }
 
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
@@ -27,17 +25,13 @@ function postCard(req, res) {
         return;
       }
 
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      console.error(err);
+      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
     });
 }
 
 function deleteCard(req, res) {
   const { _id: owner } = req.user;
-
-  if (!owner) {
-    res.status(UNAUTHORIZED_ERROR_CODE).send({ message: 'Удаление карточек доступно только для авторизованных пользователей' });
-    return;
-  }
 
   Card.findById(req.params.cardId)
     .then((card) => {
@@ -68,7 +62,8 @@ function deleteCard(req, res) {
         return;
       }
 
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      console.error(err);
+      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
     });
 }
 
@@ -96,7 +91,8 @@ function putLike(req, res) {
         return;
       }
 
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      console.error(err);
+      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
     });
 }
 
@@ -124,7 +120,8 @@ function deleteLike(req, res) {
         return;
       }
 
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      console.error(err);
+      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
     });
 }
 

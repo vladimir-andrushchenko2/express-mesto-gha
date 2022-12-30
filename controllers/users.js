@@ -6,7 +6,10 @@ const { NOT_FOUND_CODE, BAD_REQUEST_CODE, SERVER_ERROR_CODE } = require('../cons
 function getUsers(req, res) {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      console.error(err);
+      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
+    });
 }
 
 function getUser(req, res) {
@@ -29,7 +32,8 @@ function getUser(req, res) {
         return;
       }
 
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      console.error(err);
+      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
     });
 }
 
@@ -43,7 +47,8 @@ function postUser(req, res) {
         res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      console.error(err);
+      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
     });
 }
 
@@ -63,14 +68,17 @@ function patchUser(req, res) {
   }
 
   User.findByIdAndUpdate(req.user._id, update, updateOptions)
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      res.send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST_CODE).send({ message: err.message });
         return;
       }
 
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      console.error(err);
+      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
     });
 }
 
@@ -95,7 +103,8 @@ function patchUserAvatar(req, res) {
         return;
       }
 
-      res.status(SERVER_ERROR_CODE).send({ message: err.message });
+      console.error(err);
+      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
     });
 }
 

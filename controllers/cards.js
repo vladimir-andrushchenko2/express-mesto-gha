@@ -1,8 +1,6 @@
 const Card = require('../models/card');
 const { NotFound } = require('../errorTypes');
-const {
-  CARD_NOT_FOUND_MSG,
-} = require('../constants');
+const { CARD_NOT_FOUND_MSG } = require('../constants');
 const { makeCatchHandler } = require('../utils');
 
 function getCards(req, res) {

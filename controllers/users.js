@@ -2,14 +2,16 @@ const { ValidationError, CastError } = require('mongoose').Error;
 const User = require('../models/user');
 // const { removeUndefinedEntries } = require('../utils');
 const { NotFound } = require('../errorTypes');
-const { NOT_FOUND_CODE, BAD_REQUEST_CODE, SERVER_ERROR_CODE } = require('../constants');
+const {
+  NOT_FOUND_CODE, BAD_REQUEST_CODE, SERVER_ERROR_CODE, SERVER_ERROR_MSG, USER_NOT_FOUND_MSG,
+} = require('../constants');
 
 function getUsers(req, res) {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((err) => {
       console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
+      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
     });
 }
 
@@ -17,7 +19,7 @@ function getUser(req, res) {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        throw new NotFound('Запрашиваемый пользователь не найден');
+        throw new NotFound(USER_NOT_FOUND_MSG);
       }
 
       res.send({ data: user });
@@ -34,7 +36,7 @@ function getUser(req, res) {
       }
 
       console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
+      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
     });
 }
 
@@ -49,7 +51,7 @@ function postUser(req, res) {
         return;
       }
       console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
+      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
     });
 }
 
@@ -72,7 +74,7 @@ function patchUser(req, res) {
       }
 
       console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
+      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
     });
 }
 
@@ -93,7 +95,7 @@ function patchUserAvatar(req, res) {
       }
 
       console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
+      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
     });
 }
 

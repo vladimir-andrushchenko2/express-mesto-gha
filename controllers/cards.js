@@ -2,7 +2,7 @@ const { ValidationError, CastError } = require('mongoose').Error;
 const Card = require('../models/card');
 const { NotFound } = require('../errorTypes');
 const {
-  NOT_FOUND_CODE, BAD_REQUEST_CODE, SERVER_ERROR_CODE,
+  NOT_FOUND_CODE, BAD_REQUEST_CODE, SERVER_ERROR_CODE, SERVER_ERROR_MSG, CARD_NOT_FOUND_MSG,
 } = require('../constants');
 
 function getCards(req, res) {
@@ -10,7 +10,7 @@ function getCards(req, res) {
     .then((cards) => res.send({ data: cards }))
     .catch((err) => {
       console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
+      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
     });
 }
 
@@ -27,7 +27,7 @@ function postCard(req, res) {
       }
 
       console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
+      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
     });
 }
 
@@ -35,7 +35,7 @@ function deleteCard(req, res) {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        throw new NotFound('Такой карточки нет');
+        throw new NotFound(CARD_NOT_FOUND_MSG);
       }
 
       return Card.findByIdAndRemove(card._id);
@@ -53,7 +53,7 @@ function deleteCard(req, res) {
       }
 
       console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
+      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
     });
 }
 
@@ -65,7 +65,7 @@ function putLike(req, res) {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFound('Такой карточки не существует');
+        throw new NotFound(CARD_NOT_FOUND_MSG);
       }
 
       res.send({ data: card });
@@ -82,7 +82,7 @@ function putLike(req, res) {
       }
 
       console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
+      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
     });
 }
 
@@ -94,7 +94,7 @@ function deleteLike(req, res) {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFound('Такой карточки не существует');
+        throw new NotFound(CARD_NOT_FOUND_MSG);
       }
 
       res.send({ data: card });
@@ -111,7 +111,7 @@ function deleteLike(req, res) {
       }
 
       console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: 'Что-то пошло не так' });
+      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
     });
 }
 

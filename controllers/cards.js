@@ -57,63 +57,40 @@ function deleteCard(req, res) {
     });
 }
 
-function putLike(req, res) {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-    { new: true },
-  )
-    .then((card) => {
-      if (!card) {
-        throw new NotFound(CARD_NOT_FOUND_MSG);
-      }
+function updateCard(makeUpdateObj) {
+  return (req, res) => {
+    Card.findByIdAndUpdate(
+      req.params.cardId,
+      makeUpdateObj(req),
+      { new: true },
+    )
+      .then((card) => {
+        if (!card) {
+          throw new NotFound(CARD_NOT_FOUND_MSG);
+        }
 
-      res.send({ data: card });
-    })
-    .catch((err) => {
-      if (err instanceof NotFound) {
-        res.status(NOT_FOUND_CODE).send({ message: err.message });
-        return;
-      }
+        res.send({ data: card });
+      })
+      .catch((err) => {
+        if (err instanceof NotFound) {
+          res.status(NOT_FOUND_CODE).send({ message: err.message });
+          return;
+        }
 
-      if (err instanceof CastError) {
-        res.status(BAD_REQUEST_CODE).send({ message: err.message });
-        return;
-      }
+        if (err instanceof CastError) {
+          res.status(BAD_REQUEST_CODE).send({ message: err.message });
+          return;
+        }
 
-      console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
-    });
+        console.error(err);
+        res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
+      });
+  };
 }
 
-function deleteLike(req, res) {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } }, // убрать _id из массива
-    { new: true },
-  )
-    .then((card) => {
-      if (!card) {
-        throw new NotFound(CARD_NOT_FOUND_MSG);
-      }
+const putLike = updateCard((req) => ({ $addToSet: { likes: req.user._id } }));
 
-      res.send({ data: card });
-    })
-    .catch((err) => {
-      if (err instanceof NotFound) {
-        res.status(NOT_FOUND_CODE).send({ message: err.message });
-        return;
-      }
-
-      if (err instanceof CastError) {
-        res.status(BAD_REQUEST_CODE).send({ message: err.message });
-        return;
-      }
-
-      console.error(err);
-      res.status(SERVER_ERROR_CODE).send({ message: SERVER_ERROR_MSG });
-    });
-}
+const deleteLike = updateCard((req) => ({ $pull: { likes: req.user._id } }));
 
 module.exports = {
   getCards, postCard, deleteCard, putLike, deleteLike,

@@ -24,6 +24,10 @@ function getUser(req, res) {
         return;
       }
 
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: err.message })
+      }
+
       res.status(500).send({ message: err.message })
     });
 }
@@ -64,7 +68,13 @@ function patchUser(req, res) {
 
   User.findByIdAndUpdate(req.user._id, update, updateOptions)
     .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: err.message }));
+    .catch(err => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: err.message })
+      }
+
+      res.status(500).send({ message: err.message })
+    });
 }
 
 function patchUserAvatar(req, res) {
@@ -82,7 +92,13 @@ function patchUserAvatar(req, res) {
 
   User.findByIdAndUpdate(req.user._id, { avatar }, updateOptions)
     .then(user => res.send({ data: user }))
-    .catch(err => res.status(500).send({ message: err.message }));
+    .catch(err => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: err.message })
+      }
+
+      res.status(500).send({ message: err.message })
+    });
 }
 
 module.exports = { getUsers, getUser, postUser, patchUser, patchUserAvatar };

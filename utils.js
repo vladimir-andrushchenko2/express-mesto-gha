@@ -5,7 +5,7 @@ function removeUndefinedEntries(object) {
     }
 
     return { ...prev, [key]: value };
-  }, {})
+  }, {});
 }
 
 module.exports = { removeUndefinedEntries };

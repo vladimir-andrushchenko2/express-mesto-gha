@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 const User = require('../models/user');
 const { removeUndefinedEntries } = require('../utils');
 const { NotFound } = require('../errorTypes');

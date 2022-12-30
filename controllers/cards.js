@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 const Card = require('../models/card');
 const { NotFound, UnauthorizedError } = require('../errorTypes');
 

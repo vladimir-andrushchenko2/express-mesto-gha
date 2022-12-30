@@ -7,6 +7,7 @@ const { makeCatchHandler } = require('../utils');
 
 function getCards(req, res) {
   Card.find({})
+    .populate(['owner', 'likes'])
     .then((cards) => res.send({ data: cards }))
     .catch(makeCatchHandler(res));
 }
@@ -16,12 +17,14 @@ function postCard(req, res) {
   const { _id: owner } = req.user;
 
   Card.create({ name, link, owner })
+    .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
     .catch(makeCatchHandler(res));
 }
 
 function deleteCard(req, res) {
   Card.findByIdAndRemove(req.params.cardId)
+    .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
         throw new NotFound(CARD_NOT_FOUND_MSG);
@@ -39,6 +42,7 @@ function updateCard(makeUpdateObj) {
       makeUpdateObj(req),
       { new: true },
     )
+      .populate(['owner', 'likes'])
       .then((card) => {
         if (!card) {
           throw new NotFound(CARD_NOT_FOUND_MSG);
